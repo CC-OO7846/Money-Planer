@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07110f">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="A private, local-first monthly cashflow planner.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>CLEAN // PLANNER V11.1</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
+  <link rel="apple-touch-icon" sizes="192x192" href="./assets/icon-192.png">
+  <link rel="stylesheet" href="./app.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">Skip to content</a>
+
+  <div class="app-frame">
+    <aside class="sidebar" aria-label="Primary navigation">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">//</span>
+        <span class="brand-copy"><strong>CLEAN // PLANNER</strong><small>PERSONAL CONTROL SYSTEM</small></span>
+      </div>
+
+      <p class="nav-label">WORKSPACE</p>
+      <nav class="nav-list">
+        <button type="button" class="nav-item is-active" data-view="dashboard"><span class="nav-icon" aria-hidden="true">⌂</span><span>Dashboard</span></button>
+        <button type="button" class="nav-item" data-view="monthly-expense"><span class="nav-icon" aria-hidden="true">◫</span><span>Monthly Expense</span></button>
+        <button type="button" class="nav-item" data-view="ot"><span class="nav-icon nav-icon--amber" aria-hidden="true">ϟ</span><span>OT Planner</span></button>
+        <button type="button" class="nav-item" data-view="buy-check"><span class="nav-icon" aria-hidden="true">✓</span><span>Buy Check</span></button>
+      </nav>
+
+      <p class="nav-label">RECORDS</p>
+      <nav class="nav-list nav-list--compact">
+        <button type="button" class="nav-item" data-view="transactions"><span class="nav-dot" aria-hidden="true"></span><span>Transactions</span></button>
+        <button type="button" class="nav-item" data-view="recurring"><span class="nav-dot" aria-hidden="true"></span><span>Recurring</span></button>
+        <button type="button" class="nav-item" data-view="goals"><span class="nav-dot" aria-hidden="true"></span><span>Goals</span></button>
+        <button type="button" class="nav-item" data-view="calendar"><span class="nav-dot" aria-hidden="true"></span><span>Cashflow Calendar</span></button>
+        <button type="button" class="nav-item" data-view="monthly-close"><span class="nav-dot" aria-hidden="true"></span><span>Monthly Close</span></button>
+        <button type="button" class="nav-item" data-view="trend"><span class="nav-dot" aria-hidden="true"></span><span>Monthly Trend</span></button>
+        <button type="button" class="nav-item" data-view="categories"><span class="nav-dot" aria-hidden="true"></span><span>Categories</span></button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button type="button" class="nav-item" data-view="settings"><span class="nav-icon" aria-hidden="true">⚙</span><span>Settings</span></button>
+        <p class="local-note"><span aria-hidden="true"></span>Data stays on this device</p>
+      </div>
+    </aside>
+
+    <main class="main-shell" id="mainContent" tabindex="-1">
+      <header class="mobile-header">
+        <button type="button" class="mobile-brand" data-view="dashboard" aria-label="Go to Dashboard"><span class="brand-mark" aria-hidden="true">//</span><span>CLEAN // PLANNER</span></button>
+        <span class="version-pill">V11.1</span>
+      </header>
+
+      <div id="errorBanner" class="error-banner" role="alert" hidden></div>
+
+      <section class="view is-active" id="dashboard" data-title="Dashboard" aria-labelledby="dashboardTitle">
+        <header class="page-header page-header--dashboard">
+          <div><p class="eyebrow">CASHFLOW // LIVE STATUS</p><h1 id="dashboardTitle">Financial Overview</h1></div>
+          <span class="live-chip"><span aria-hidden="true"></span>LOCAL &amp; LIVE</span>
+        </header>
+
+        <article class="hero-card">
+          <div class="hero-glow" aria-hidden="true"></div>
+          <p>AVAILABLE FREE CASH</p>
+          <strong id="dashboardFreeCash">THB 0</strong>
+          <small id="dashboardFreeCashDetail">Plan Free Cash less applied Goal Funding</small>
+          <span id="dashboardCashStatus" class="status-chip status-chip--good">ON TRACK</span>
+          <svg class="hero-line" viewBox="0 0 260 74" aria-hidden="true" focusable="false">
+            <path d="M3 64 C34 50 48 59 72 42 S112 51 132 30 S176 39 202 19 S232 24 257 5"></path>
+          </svg>
+        </article>
+
+        <div class="metric-grid metric-grid--primary">
+          <article class="metric-card"><span class="metric-kicker"><i class="metric-symbol" aria-hidden="true">↑</i>Monthly Income</span><strong id="dashboardIncome">THB 0</strong><small id="dashboardIncomeDetail">Base + Actual OT</small></article>
+          <article class="metric-card"><span class="metric-kicker"><i class="metric-symbol metric-symbol--red" aria-hidden="true">↓</i>Monthly Expense</span><strong id="dashboardExpense">THB 0</strong><small>Planned category total</small></article>
+          <article class="metric-card"><span class="metric-kicker"><i class="metric-symbol" aria-hidden="true">◆</i>Saving + Investment</span><strong id="dashboardGoalsPlan">THB 0</strong><small id="dashboardSavingRate">0% of income</small></article>
+          <article class="metric-card"><span class="metric-kicker"><i class="metric-symbol" aria-hidden="true">▣</i>Emergency Fund</span><strong id="dashboardEmergency">THB 0</strong><small id="dashboardEmergencyMonths">0.0 months</small></article>
+        </div>
+
+        <button type="button" class="ot-strip" data-view="ot">
+          <span><small>OVERTIME // ACTUAL</small><strong id="dashboardOtActual">THB 0</strong><em id="dashboardOtNeeded">Set an OT target</em></span>
+          <span class="ot-strip-arrow" aria-hidden="true">›</span>
+        </button>
+
+        <div class="dashboard-grid">
+          <article class="panel health-panel">
+            <div class="panel-head"><h2>Financial Health</h2><span id="healthTag" class="status-chip">CALCULATING</span></div>
+            <div class="health-layout">
+              <div class="health-ring" id="healthRing" role="img" aria-label="Financial health score 0 out of 100"><span><strong id="healthScore">0</strong><small>/100</small></span></div>
+              <div class="health-copy"><strong id="healthHeadline">—</strong><p id="healthDescription">Based on free cash, saving rate, planned costs, and emergency reserves.</p></div>
+            </div>
+          </article>
+
+          <article class="panel snapshot-panel">
+            <div class="panel-head"><h2>This Month</h2><span class="status-chip">PLAN</span></div>
+            <dl class="detail-list">
+              <div><dt>Base Net Income</dt><dd id="snapshotBase">THB 0</dd></div>
+              <div><dt>Actual OT Earned</dt><dd id="snapshotOt">THB 0</dd></div>
+              <div><dt>OT Still Needed</dt><dd id="snapshotOtNeeded">THB 0</dd></div>
+              <div><dt>Plan Free Cash</dt><dd id="snapshotPlanFreeCash">THB 0</dd></div>
+              <div><dt>Goal Funding Applied</dt><dd id="snapshotFundingApplied">THB 0</dd></div>
+              <div><dt>Goal Funding Pool</dt><dd id="snapshotPool">THB 0</dd></div>
+            </dl>
+          </article>
+        </div>
+
+        <article class="panel insights-panel">
+          <div class="panel-head"><h2>Smart Insights</h2><span class="status-chip status-chip--good">LIVE</span></div>
+          <div class="insight-grid" id="smartInsights"></div>
+        </article>
+      </section>
+
+      <section class="view" id="monthly-expense" data-title="Monthly Expense" aria-labelledby="expenseTitle">
+        <header class="page-header"><div><p class="eyebrow">PLANNING // MONTHLY</p><h1 id="expenseTitle">Monthly Expense</h1><p>Set the amount you plan to spend in each category. Transactions remain separate history.</p></div><button type="button" class="button button--secondary" data-view="categories">Manage Categories</button></header>
+
+        <article class="summary-card summary-card--expense"><span>PLANNED TOTAL</span><strong id="expenseTotal">THB 0</strong><small id="expenseCategoryCount">0 categories</small></article>
+        <div class="category-plan-list" id="categoryPlanList"></div>
+      </section>
+
+      <section class="view" id="ot" data-title="OT Planner" aria-labelledby="otTitle">
+        <header class="page-header"><div><p class="eyebrow eyebrow--amber">OVERTIME // SIMPLE PLAN</p><h1 id="otTitle">OT Planner</h1><p>How much more OT income do you still need this month?</p></div></header>
+
+        <div class="ot-layout">
+          <article class="panel ot-input-panel">
+            <div class="panel-head"><h2>Monthly OT</h2><span id="otStatus" class="status-chip status-chip--amber">SET TARGET</span></div>
+            <div class="form-grid">
+              <label class="field"><span>Monthly OT Target</span><span class="money-input"><b>THB</b><input id="otTargetInput" type="number" min="0" step="100" inputmode="decimal" autocomplete="off"></span></label>
+              <label class="field"><span>Actual OT Earned</span><span class="money-input"><b>THB</b><input id="otActualInput" type="number" min="0" step="100" inputmode="decimal" autocomplete="off"></span></label>
+            </div>
+            <button type="button" class="button button--amber button--wide" data-action="save-ot">Save OT</button>
+            <p class="form-note">Actual OT Earned feeds Monthly Income, Plan Free Cash, Available Free Cash, Trend, Calendar, Goals, and Monthly Close.</p>
+          </article>
+
+          <article class="ot-result-card">
+            <span>OT STILL NEEDED</span>
+            <strong id="otStillNeeded">THB 0</strong>
+            <div class="progress-track progress-track--amber"><i id="otProgressBar"></i></div>
+            <p><b id="otProgressText">0%</b> of target earned</p>
+          </article>
+        </div>
+
+        <div class="metric-grid metric-grid--three">
+          <article class="metric-card"><span class="metric-kicker">Monthly Income</span><strong id="otMonthlyIncome">THB 0</strong><small>Base + Actual OT</small></article>
+          <article class="metric-card"><span class="metric-kicker">Available Free Cash</span><strong id="otFreeCash">THB 0</strong><small id="otFreeCashDetail">Plan Free Cash less applied Goal Funding</small></article>
+          <article class="metric-card"><span class="metric-kicker">Status</span><strong id="otStatusText">SET TARGET</strong><small id="otStatusDetail">Enter a target to begin</small></article>
+        </div>
+      </section>
+
+      <section class="view" id="buy-check" data-title="Buy Check" aria-labelledby="buyTitle">
+        <header class="page-header"><div><p class="eyebrow">DECISION // CHECK</p><h1 id="buyTitle">Can I Buy This?</h1><p>Measure a categorized purchase against Available Free Cash.</p></div></header>
+        <div class="two-column-layout">
+          <article class="panel">
+            <div class="panel-head"><h2>Purchase</h2><span class="status-chip">INPUT</span></div>
+            <div class="form-grid">
+              <label class="field field--wide"><span>Price</span><span class="money-input"><b>THB</b><input id="buyPrice" type="number" min="0" step="100" inputmode="decimal" autocomplete="off" placeholder="0"></span></label>
+              <label class="field"><span>Category</span><select id="buyCategory"><option>Essential / Work</option><option>Car / Repair</option><option>Tools / Gadget</option><option>Lifestyle</option><option>Travel / Experience</option><option>Other</option></select></label>
+              <label class="field"><span>Priority</span><select id="buyPriority"><option value="need">Need now</option><option value="useful">Useful, can wait</option><option value="want">Want</option></select></label>
+            </div>
+            <button type="button" class="button button--primary button--wide" data-action="analyze-purchase">Analyze Purchase</button>
+          </article>
+
+          <article class="panel buy-result" id="buyResult" aria-live="polite">
+            <div class="decision-mark" id="buyDecisionMark" aria-hidden="true">?</div>
+            <span id="buyDecisionLabel">READY TO ANALYZE</span>
+            <strong id="buyDecisionTitle">Enter a price</strong>
+            <p id="buyDecisionCopy">The result will use Available Free Cash, priority, and category risk.</p>
+            <dl class="detail-list">
+              <div><dt>Plan Free Cash</dt><dd id="buyPlanFreeCash">THB 0</dd></div>
+              <div><dt>Available Free Cash Before</dt><dd id="buyBefore">THB 0</dd></div>
+              <div><dt>Available Free Cash After</dt><dd id="buyAfter">THB 0</dd></div>
+              <div><dt>Share of Available Free Cash</dt><dd id="buyShare">0%</dd></div>
+              <div><dt>Category Risk Rule</dt><dd id="buyCategoryRisk">Not analyzed</dd></div>
+            </dl>
+          </article>
+        </div>
+      </section>
+
+      <section class="view" id="transactions" data-title="Transactions" aria-labelledby="transactionsTitle">
+        <header class="page-header"><div><p class="eyebrow">HISTORY // REFERENCE</p><h1 id="transactionsTitle">Transactions</h1><p>Search and maintain history without changing your Monthly Expense plan.</p></div><button type="button" class="button button--primary" data-action="open-transaction">Add Transaction</button></header>
+
+        <article class="panel filters-panel" aria-label="Transaction filters">
+          <div class="filter-grid">
+            <label class="field"><span>Search</span><input id="transactionSearch" type="search" placeholder="Description or category" autocomplete="off"></label>
+            <label class="field"><span>Month</span><input id="transactionMonth" type="month"></label>
+            <label class="field"><span>Category</span><select id="transactionCategoryFilter"><option value="">All categories</option></select></label>
+            <label class="field"><span>Type</span><select id="transactionTypeFilter"><option value="">All transactions</option><option value="recurring">Recurring</option><option value="normal">Normal</option></select></label>
+          </div>
+        </article>
+
+        <div class="list-summary"><strong id="transactionSummary">0 transactions</strong><span>Reference data only</span></div>
+        <div class="record-list" id="transactionList"></div>
+      </section>
+
+      <section class="view" id="recurring" data-title="Recurring" aria-labelledby="recurringTitle">
+        <header class="page-header"><div><p class="eyebrow">SCHEDULE // RECURRING</p><h1 id="recurringTitle">Recurring</h1><p>Track upcoming, due, and paid bills without changing category plans.</p></div><button type="button" class="button button--primary" data-action="open-recurring">Add Recurring</button></header>
+        <div class="metric-grid metric-grid--three">
+          <article class="metric-card"><span class="metric-kicker">Upcoming</span><strong id="recurringUpcomingCount">0</strong><small>Not due yet</small></article>
+          <article class="metric-card"><span class="metric-kicker">Due</span><strong id="recurringDueCount">0</strong><small>Ready to mark paid</small></article>
+          <article class="metric-card"><span class="metric-kicker">Paid</span><strong id="recurringPaidCount">0</strong><small>This month</small></article>
+        </div>
+        <div class="record-list" id="recurringList"></div>
+      </section>
+
+      <section class="view" id="goals" data-title="Goals" aria-labelledby="goalsTitle">
+        <header class="page-header"><div><p class="eyebrow">GOALS // FUNDING</p><h1 id="goalsTitle">Goals</h1><p>Allocate only from the funding pool available this month.</p></div><button type="button" class="button button--primary" data-action="open-goal">Add Goal</button></header>
+
+        <div class="goals-toolbar">
+          <article class="summary-card"><span>AVAILABLE FUNDING POOL</span><strong id="goalFundingPool">THB 0</strong><small id="goalFundingSource">Actual OT and free-cash rules</small></article>
+          <article class="summary-card"><span>AVAILABLE FREE CASH</span><strong id="goalAvailableFreeCash">THB 0</strong><small id="goalFundingApplied">THB 0 applied this month</small></article>
+          <article class="panel allocation-panel">
+            <div class="panel-head"><h2>Allocation</h2><span id="allocationStatus" class="status-chip">0%</span></div>
+            <div class="inline-actions"><button type="button" class="button button--secondary" data-action="balance-goals">Balance to 100%</button><button type="button" class="button button--primary" id="applyGoalFundingButton" data-action="apply-goal-funding">Apply Funding</button><button type="button" class="button button--danger" id="undoGoalFundingButton" data-action="undo-goal-funding">Undo Funding</button></div>
+          </article>
+        </div>
+        <div class="record-list goals-list" id="goalList"></div>
+        <article class="panel funding-history-panel"><div class="panel-head"><h2>Funding Audit</h2><span class="status-chip">CURRENT MONTH</span></div><div class="record-list" id="goalFundingHistory"></div></article>
+      </section>
+
+      <section class="view" id="calendar" data-title="Cashflow Calendar" aria-labelledby="calendarTitle">
+        <header class="page-header"><div><p class="eyebrow">CASHFLOW // CALENDAR</p><h1 id="calendarTitle">Cashflow Calendar</h1><p>Projected Cash Balance is a dated forecast; it is not Plan Free Cash.</p></div></header>
+        <div class="month-toolbar"><button type="button" class="icon-button" data-action="calendar-prev" aria-label="Previous month">‹</button><strong id="calendarMonthLabel">Month</strong><button type="button" class="icon-button" data-action="calendar-next" aria-label="Next month">›</button></div>
+        <article class="panel calendar-balance-panel">
+          <div class="calendar-opening-control"><label class="field"><span>Opening Balance</span><span class="money-input"><b>THB</b><input id="calendarOpeningBalance" type="number" step="100" inputmode="decimal"></span></label><button type="button" class="button button--secondary" data-action="save-opening-balance">Save</button></div>
+          <div><span>Projected Closing Cash Balance</span><strong id="calendarClosingBalance">THB 0</strong></div>
+          <span id="calendarNet" class="status-chip">NET THB 0</span>
+        </article>
+        <div class="calendar-weekdays" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+        <div class="calendar-grid" id="calendarGrid" role="grid" aria-label="Monthly cashflow calendar"></div>
+        <p class="calendar-note" id="calendarNote"></p>
+      </section>
+
+      <section class="view" id="monthly-close" data-title="Monthly Close" aria-labelledby="closeTitle">
+        <header class="page-header"><div><p class="eyebrow">HISTORY // SNAPSHOT</p><h1 id="closeTitle">Monthly Close</h1><p>Freeze a month so later planning changes cannot rewrite history.</p></div></header>
+        <div class="month-toolbar"><button type="button" class="icon-button" data-action="close-prev" aria-label="Previous month">‹</button><strong id="closeMonthLabel">Month</strong><button type="button" class="icon-button" data-action="close-next" aria-label="Next month">›</button></div>
+
+        <article class="panel close-panel">
+          <div class="panel-head"><h2>Snapshot</h2><span id="closeStatus" class="status-chip">OPEN</span></div>
+          <dl class="close-grid">
+            <div><dt>Monthly Expense</dt><dd id="closeExpense">THB 0</dd></div>
+            <div><dt>Plan Free Cash</dt><dd id="closePlanFreeCash">THB 0</dd></div>
+            <div><dt>Goal Funding Applied</dt><dd id="closeGoalFundingApplied">THB 0</dd></div>
+            <div><dt>Available Free Cash</dt><dd id="closeAvailableFreeCash">THB 0</dd></div>
+            <div><dt>Calendar Projected Cash Balance</dt><dd id="closeCalendarProjected">THB 0</dd></div>
+          </dl>
+          <div class="form-grid close-input-grid">
+            <label class="field"><span>Actual Base Net Income</span><span class="money-input"><b>THB</b><input id="closeBaseIncomeInput" type="number" min="0" step="100" inputmode="decimal"></span></label>
+            <label class="field"><span>Actual OT Income</span><span class="money-input"><b>THB</b><input id="closeOtIncomeInput" type="number" min="0" step="100" inputmode="decimal"></span></label>
+            <label class="field"><span>Actual Saving</span><span class="money-input"><b>THB</b><input id="closeActualSaving" type="number" min="0" step="100" inputmode="decimal"></span></label>
+            <label class="field"><span>Actual Investment</span><span class="money-input"><b>THB</b><input id="closeActualInvestment" type="number" min="0" step="100" inputmode="decimal"></span></label>
+            <label class="field"><span>Actual Salary Day</span><input id="closeSalaryDayInput" type="number" min="1" max="28" step="1" inputmode="numeric"></label>
+            <label class="field"><span>Actual Closing Cash Balance <small>(optional)</small></span><span class="money-input"><b>THB</b><input id="closeBalanceInput" type="number" step="100" inputmode="decimal"></span></label>
+          </div>
+          <div class="inline-actions close-actions"><button type="button" class="button button--primary" id="closeMonthButton" data-action="review-close-month">Review &amp; Close Month</button><button type="button" class="button button--danger" id="reopenMonthButton" data-action="open-reopen-review" hidden>Reopen for Correction</button></div>
+          <p class="form-note" id="closeNote">Review is required before freezing. Corrections create an auditable new revision.</p>
+        </article>
+        <article class="panel close-audit-panel"><div class="panel-head"><h2>Snapshot Audit</h2><span id="closeRevision" class="status-chip">NO REVISION</span></div><div class="record-list" id="closeAuditList"></div></article>
+        <div class="record-list" id="closedMonthList"></div>
+      </section>
+
+      <section class="view" id="trend" data-title="Monthly Trend" aria-labelledby="trendTitle">
+        <header class="page-header"><div><p class="eyebrow">ANALYTICS // VERIFIED</p><h1 id="trendTitle">Monthly Trend</h1><p>Closed snapshots are historical truth; only the active month uses live state.</p></div></header>
+        <article class="panel trend-panel">
+          <div class="panel-head"><h2>Income vs Expense</h2><span class="status-chip">6 MONTHS</span></div>
+          <div class="trend-chart" id="trendChart" role="img" aria-label="Income and expense chart"></div>
+        </article>
+        <div class="trend-table-wrap">
+          <table class="trend-table">
+            <thead><tr><th>Month</th><th>Income</th><th>Expense</th><th>OT</th><th>Plan Free Cash</th><th>Goal Funding</th><th>Available Free Cash</th><th>Saving Rate</th><th>Source</th></tr></thead>
+            <tbody id="trendTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="view" id="categories" data-title="Categories" aria-labelledby="categoriesTitle">
+        <header class="page-header"><div><p class="eyebrow">PLANNING // CATEGORIES</p><h1 id="categoriesTitle">Category Manager</h1><p>Deleting a category preserves transaction history under Other.</p></div><button type="button" class="button button--primary" data-action="open-category">Add Category</button></header>
+        <div class="record-list" id="categoryManagerList"></div>
+      </section>
+
+      <section class="view" id="settings" data-title="Settings" aria-labelledby="settingsTitle">
+        <header class="page-header"><div><p class="eyebrow">SYSTEM // SETTINGS</p><h1 id="settingsTitle">Settings</h1><p>One control for each financial input, with local-first backup tools.</p></div></header>
+        <div class="settings-grid">
+          <article class="panel settings-card">
+            <div class="panel-head"><h2>Income</h2><span class="status-chip">MONTHLY</span></div>
+            <label class="field"><span>Base Net Income</span><span class="money-input"><b>THB</b><input id="settingBaseIncome" type="number" min="0" step="100" inputmode="decimal"></span></label>
+            <label class="field"><span>Emergency Fund</span><span class="money-input"><b>THB</b><input id="settingEmergencyFund" type="number" min="0" step="100" inputmode="decimal"></span></label>
+          </article>
+          <article class="panel settings-card">
+            <div class="panel-head"><h2>Planning</h2><span class="status-chip">GOALS</span></div>
+            <label class="field"><span>Saving Goal</span><span class="money-input"><b>THB</b><input id="settingSavingGoal" type="number" min="0" step="100" inputmode="decimal"></span></label>
+            <label class="field"><span>Investment Goal</span><span class="money-input"><b>THB</b><input id="settingInvestmentGoal" type="number" min="0" step="100" inputmode="decimal"></span></label>
+          </article>
+          <article class="panel settings-card">
+            <div class="panel-head"><h2>Payday</h2><span class="status-chip">CALENDAR</span></div>
+            <label class="field"><span>Salary Day</span><input id="settingSalaryDay" type="number" min="1" max="28" step="1" inputmode="numeric"></label>
+            <p class="form-note">Limited to day 1–28 so it exists in every month.</p>
+          </article>
+          <article class="panel settings-card">
+            <div class="panel-head"><h2>Goal Funding</h2><span class="status-chip">RULES</span></div>
+            <label class="check-field"><input id="settingOtFundingEnabled" type="checkbox"><span>Use Actual OT Earned</span></label>
+            <label class="field"><span>OT Allocation</span><span class="percent-input"><input id="settingOtPercent" type="number" min="0" max="100" step="1" inputmode="decimal"><b>%</b></span></label>
+            <label class="field"><span>Available Free Cash Surplus Allocation</span><span class="percent-input"><input id="settingSurplusPercent" type="number" min="0" max="100" step="1" inputmode="decimal"><b>%</b></span></label>
+            <label class="field"><span>Keep as Cash Buffer</span><span class="money-input"><b>THB</b><input id="settingFundingThreshold" type="number" min="0" step="100" inputmode="decimal"></span></label>
+          </article>
+          <article class="panel settings-card settings-card--wide">
+            <div class="panel-head"><h2>Data</h2><span class="status-chip">LOCAL</span></div>
+            <div class="button-grid"><button type="button" class="button button--secondary" data-action="export-json">Export JSON</button><button type="button" class="button button--secondary" data-action="import-json">Import JSON</button><button type="button" class="button button--secondary" data-action="export-csv">Export CSV</button><button type="button" class="button button--secondary" data-action="import-csv">Import CSV</button></div>
+            <input id="jsonFileInput" class="visually-hidden" type="file" accept="application/json,.json">
+            <input id="csvFileInput" class="visually-hidden" type="file" accept="text/csv,.csv">
+          </article>
+          <article class="panel settings-card settings-card--wide">
+            <div class="panel-head"><h2>App</h2><span class="status-chip status-chip--good">V11.1</span></div>
+            <dl class="detail-list">
+              <div><dt>Version</dt><dd>CLEAN // PLANNER V11.1</dd></div>
+              <div><dt>Schema</dt><dd>11</dd></div>
+              <div><dt>Local Data</dt><dd id="localDataStatus">Checking…</dd></div>
+              <div><dt>Connection</dt><dd id="connectionStatus">Checking…</dd></div>
+            </dl>
+            <div class="inline-actions"><button type="button" class="button button--primary" id="installAppButton" data-action="install-app">Install PWA</button><button type="button" class="button button--secondary" data-action="save-settings">Save Settings</button></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="view" id="more" data-title="More" aria-labelledby="moreTitle">
+        <header class="page-header"><div><p class="eyebrow">TOOLS // NAVIGATION</p><h1 id="moreTitle">More</h1><p>Open planning, records, and system tools.</p></div></header>
+        <div class="more-grid">
+          <button type="button" class="more-card" data-view="buy-check"><span aria-hidden="true">✓</span><strong>Buy Check</strong><small>Test a purchase</small></button>
+          <button type="button" class="more-card" data-view="recurring"><span aria-hidden="true">↻</span><strong>Recurring</strong><small>Track monthly bills</small></button>
+          <button type="button" class="more-card" data-view="goals"><span aria-hidden="true">◆</span><strong>Goals</strong><small>Fund progress</small></button>
+          <button type="button" class="more-card" data-view="calendar"><span aria-hidden="true">▦</span><strong>Calendar</strong><small>See running balance</small></button>
+          <button type="button" class="more-card" data-view="monthly-close"><span aria-hidden="true">□</span><strong>Monthly Close</strong><small>Freeze history</small></button>
+          <button type="button" class="more-card" data-view="trend"><span aria-hidden="true">⌁</span><strong>Monthly Trend</strong><small>Compare snapshots</small></button>
+          <button type="button" class="more-card" data-view="categories"><span aria-hidden="true">◫</span><strong>Categories</strong><small>Manage the plan</small></button>
+          <button type="button" class="more-card" data-view="settings"><span aria-hidden="true">⚙</span><strong>Settings</strong><small>Income, data, app</small></button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="bottom-nav" aria-label="Mobile navigation">
+    <button type="button" class="bottom-nav-item is-active" data-view="dashboard"><span aria-hidden="true">⌂</span><small>Home</small></button>
+    <button type="button" class="bottom-nav-item" data-view="monthly-expense"><span aria-hidden="true">◫</span><small>Expense</small></button>
+    <button type="button" class="bottom-nav-item bottom-nav-item--ot" data-view="ot"><span aria-hidden="true">ϟ</span><small>OT</small></button>
+    <button type="button" class="bottom-nav-item" data-view="transactions"><span aria-hidden="true">≡</span><small>History</small></button>
+    <button type="button" class="bottom-nav-item" data-view="more"><span aria-hidden="true">•••</span><small>More</small></button>
+  </nav>
+
+  <dialog class="modal" id="transactionDialog" aria-labelledby="transactionDialogTitle">
+    <form id="transactionForm" novalidate>
+      <header class="modal-head"><div><p class="eyebrow">HISTORY</p><h2 id="transactionDialogTitle">Add Transaction</h2></div><button type="button" class="icon-button" data-action="close-dialog" aria-label="Close transaction dialog">×</button></header>
+      <input id="transactionId" type="hidden">
+      <div class="form-grid">
+        <label class="field field--wide"><span>Description</span><input id="transactionName" maxlength="80" required autocomplete="off"></label>
+        <label class="field"><span>Amount</span><span class="money-input"><b>THB</b><input id="transactionAmount" type="number" min="0.01" step="0.01" inputmode="decimal" required></span></label>
+        <label class="field"><span>Date</span><input id="transactionDate" type="date" required></label>
+        <label class="field field--wide"><span>Category</span><select id="transactionCategory" required></select></label>
+        <label class="check-field field--wide"><input id="transactionRecurringTag" type="checkbox"><span>Recurring tag</span></label>
+      </div>
+      <div class="modal-actions"><button type="button" class="button button--secondary" data-action="close-dialog">Cancel</button><button type="submit" class="button button--primary">Save Transaction</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="recurringDialog" aria-labelledby="recurringDialogTitle">
+    <form id="recurringForm" novalidate>
+      <header class="modal-head"><div><p class="eyebrow">SCHEDULE</p><h2 id="recurringDialogTitle">Add Recurring</h2></div><button type="button" class="icon-button" data-action="close-dialog" aria-label="Close recurring dialog">×</button></header>
+      <input id="recurringId" type="hidden">
+      <div class="form-grid">
+        <label class="field field--wide"><span>Name</span><input id="recurringName" maxlength="80" required autocomplete="off"></label>
+        <label class="field"><span>Amount</span><span class="money-input"><b>THB</b><input id="recurringAmount" type="number" min="0.01" step="0.01" inputmode="decimal" required></span></label>
+        <label class="field"><span>Due Day</span><input id="recurringDay" type="number" min="1" max="28" step="1" inputmode="numeric" required></label>
+        <label class="field field--wide"><span>Category</span><select id="recurringCategory" required></select></label>
+        <label class="check-field field--wide"><input id="recurringActive" type="checkbox" checked><span>Active</span></label>
+      </div>
+      <div class="modal-actions"><button type="button" class="button button--secondary" data-action="close-dialog">Cancel</button><button type="submit" class="button button--primary">Save Recurring</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="goalDialog" aria-labelledby="goalDialogTitle">
+    <form id="goalForm" novalidate>
+      <header class="modal-head"><div><p class="eyebrow">FUNDING</p><h2 id="goalDialogTitle">Add Goal</h2></div><button type="button" class="icon-button" data-action="close-dialog" aria-label="Close goal dialog">×</button></header>
+      <input id="goalId" type="hidden">
+      <div class="form-grid">
+        <label class="field field--wide"><span>Name</span><input id="goalName" maxlength="80" required autocomplete="off"></label>
+        <label class="field"><span>Current Amount</span><span class="money-input"><b>THB</b><input id="goalCurrent" type="number" min="0" step="100" inputmode="decimal" required></span></label>
+        <label class="field"><span>Target</span><span class="money-input"><b>THB</b><input id="goalTarget" type="number" min="0.01" step="100" inputmode="decimal" required></span></label>
+        <label class="field"><span>Funding Allocation</span><span class="percent-input"><input id="goalAllocation" type="number" min="0" max="100" step="1" inputmode="decimal"><b>%</b></span></label>
+      </div>
+      <div class="modal-actions"><button type="button" class="button button--secondary" data-action="close-dialog">Cancel</button><button type="submit" class="button button--primary">Save Goal</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="categoryDialog" aria-labelledby="categoryDialogTitle">
+    <form id="categoryForm" novalidate>
+      <header class="modal-head"><div><p class="eyebrow">PLANNING</p><h2 id="categoryDialogTitle">Add Category</h2></div><button type="button" class="icon-button" data-action="close-dialog" aria-label="Close category dialog">×</button></header>
+      <input id="categoryId" type="hidden">
+      <div class="form-grid">
+        <label class="field field--wide"><span>Name</span><input id="categoryName" maxlength="50" required autocomplete="off"></label>
+        <label class="field"><span>Icon</span><input id="categoryIcon" maxlength="4" autocomplete="off" placeholder="•"></label>
+        <label class="field"><span>Monthly Expense</span><span class="money-input"><b>THB</b><input id="categoryAmount" type="number" min="0" step="100" inputmode="decimal" required></span></label>
+      </div>
+      <div class="modal-actions"><button type="button" class="button button--secondary" data-action="close-dialog">Cancel</button><button type="submit" class="button button--primary">Save Category</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="closeReviewDialog" aria-labelledby="closeReviewDialogTitle">
+    <form id="closeReviewForm" novalidate>
+      <header class="modal-head"><div><p class="eyebrow">FINAL REVIEW</p><h2 id="closeReviewDialogTitle">Review Monthly Close</h2></div><button type="button" class="icon-button" data-action="close-dialog" aria-label="Close monthly review dialog">×</button></header>
+      <p class="modal-copy">Confirm the corrected income, plan values, funding, and cash-balance forecast before this revision is frozen.</p>
+      <dl class="detail-list review-list" id="closeReviewSummary"></dl>
+      <label class="check-field"><input id="closeReviewConfirmed" type="checkbox"><span>I reviewed these values and want to freeze this snapshot.</span></label>
+      <div class="modal-actions"><button type="button" class="button button--secondary" data-action="close-dialog">Cancel</button><button type="submit" class="button button--primary">Confirm &amp; Freeze Month</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="reopenDialog" aria-labelledby="reopenDialogTitle">
+    <form id="reopenForm" novalidate>
+      <header class="modal-head"><div><p class="eyebrow eyebrow--amber">AUDIT-SAFE CORRECTION</p><h2 id="reopenDialogTitle">Reopen Monthly Snapshot</h2></div><button type="button" class="icon-button" data-action="close-dialog" aria-label="Close reopen dialog">×</button></header>
+      <p class="modal-copy">The frozen revision will remain in the audit trail. Reclosing creates a new revision.</p>
+      <label class="field"><span>Reason for correction</span><input id="reopenReason" maxlength="180" required autocomplete="off" placeholder="What needs to be corrected?"></label>
+      <div class="modal-actions"><button type="button" class="button button--secondary" data-action="close-dialog">Cancel</button><button type="submit" class="button button--danger">Reopen Snapshot</button></div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+  <noscript><p class="noscript">CLEAN // PLANNER requires JavaScript. Your local data has not been changed.</p></noscript>
+</body>
+</html>
