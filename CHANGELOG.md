@@ -1,5 +1,34 @@
 # Changelog
 
+## 11.2.0 - 2026-09-13
+
+### Import, validation, and storage safety
+
+- Added full-state validation after migration and every JSON/CSV import.
+- Added explicit future-schema rejection, six-count JSON review, automatic pre-import backup, transactional commit, and rollback on persistence failure.
+- Expanded CSV round-trip identity to include transaction ID, category ID/label, recurring ID/tag, and creation timestamp.
+- Added stable-ID and legacy-fingerprint deduplication with a New / Duplicate / Invalid preview; repeated imports are idempotent.
+- Added a persistent memory-only warning with Export Backup Now when localStorage is blocked or a quota write fails.
+- Added Last full backup metadata and Settings status.
+
+### Financial and historical integrity
+
+- Added canonical two-decimal `roundMoney()` handling at financial mutation boundaries.
+- Goal Funding cycles now freeze their financial basis and complete allocation rules.
+- Added derived `PLAN CHANGED` detection plus an atomic Undo & Recalculate workflow without silent balance mutation.
+- Added blank-by-default, explicitly reviewed historical snapshot backfill with a dedicated `historical-backfill` audit event.
+- Strengthened close/reopen/reclose validation for monotonic revisions, deep-copied values, and Trend exclusion while reopened.
+- Clarified negative daily allowance as Plan shortfall and clarified Calendar inclusion/exclusion with separate totals.
+
+### UX, accessibility, performance, and PWA
+
+- Replaced native confirm prompts with consistent accessible dialogs that explain each destructive result, restore focus, support Escape, and guard repeated taps.
+- Added associated inline form errors while retaining the global error boundary.
+- Preserved transaction search, month, and category filters; deleting the active category now falls back to All.
+- Bounded transaction DOM rendering to 300 visible records while preserving and filtering the full dataset.
+- Added safe waiting-service-worker update UI with one reload after activation.
+- Bumped the app, UI, schema, cache, exports, documentation, and validation suites to V11.2.
+
 ## 11.1.0 - 2026-09-13
 
 ### Financial model

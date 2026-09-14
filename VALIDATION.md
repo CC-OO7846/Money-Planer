@@ -42,7 +42,7 @@ The matrix also verified active-route correctness, bottom-navigation clearance, 
 
 ## Browser interaction checks
 
-- Schema-10 test data migrated to schema 11 without losing any active record; removed Goal Monthly Contribution values were present in the migration archive.
+- Schema-10 and schema-11 test data migrated to schema 12 without losing active records; removed Goal Monthly Contribution values remained in the migration archive.
 - Base Income changed and persisted after reload.
 - Actual OT changed; Monthly Income became Base + Actual OT.
 - Category plan changed; Monthly Expense, Plan Free Cash, and Available Free Cash updated immediately.
@@ -65,4 +65,27 @@ The matrix also verified active-route correctness, bottom-navigation clearance, 
 - Fresh PWA install reached Offline Ready; a complete reload succeeded with browser networking disabled.
 - Browser console warnings/errors during the final interaction and offline checks: 0.
 
-The V11.1 feature suite passed 29/29 checks. The responsive route-width matrix passed 156/156 cases with zero page overflow, route failures, undersized page buttons, console errors, page exceptions, or network failures. Browser tests used an isolated Chrome profile; the final visual inspection was read-only and did not modify the existing in-app browser data.
+## V11.2 hardening checks
+
+- Future-schema JSON rejected with the required user-facing message.
+- Full JSON import showed Categories, Transactions, Recurring, Goals, Closed Months, and OT Months before applying.
+- A simulated quota failure restored the pre-import state and exposed the persistent Export Backup Now warning.
+- Successful JSON import created a separate pre-import backup and committed only after validation.
+- CSV preview reported New, Duplicate, and Invalid rows; importing the same file twice added zero duplicates.
+- CSV round-trip preserved ID, recurring tag/ID, timestamp, category ID/label, and protected formula-leading cells.
+- Imported HTML-like transaction names rendered as literal text without executable DOM.
+- Goal Funding basis change showed `PLAN CHANGED` without mutating the original cycle; Undo & Recalculate left one active cycle.
+- Repeated decimal apply/undo cycles reconciled to the cent, retained bounds, and showed no balance drift.
+- Manual historical backfill started blank, required all fields and confirmation, and created revision 1 with `historical-backfill`.
+- Reopen/reclose produced monotonic audit revisions `[1, 1, 2]` while preserving the revision-1 value copy.
+- Closed historical Calendar used its frozen salary day and Trend labelled the source `MANUAL`.
+- Transaction search/month/category state survived navigation; deleting the selected category fell back to All.
+- Leap-day input was accepted; impossible dates were rejected with an associated form error.
+- Simulated unavailable localStorage kept the app functional and displayed the persistent warning.
+- Duplicate canonical IDs in stored state stopped normal load, preserved the corrupt source, loaded safe defaults, and displayed a clear startup error.
+
+## Large-data stress result
+
+An isolated Chrome profile loaded 5,000 transactions, 100 recurring items, 100 goals, and 100 categories. The Transactions DOM was capped at 300 visible matching cards without removing stored rows. Representative synchronous render times were approximately 89 ms for Transactions, 39 ms for Recurring, 49 ms for Goals, 25 ms for Calendar, and 9 ms for Dashboard on the test host.
+
+The V11.2 regression suite passed 29/29 checks and the V11.2 hardening suite passed 34/34 checks. The responsive route-width matrix passed 156/156 cases with zero page overflow, route failures, undersized page buttons, console errors, page exceptions, or network failures. Browser tests used isolated Chrome profiles; the final in-app visual inspection was read-only and reported zero console warnings/errors.

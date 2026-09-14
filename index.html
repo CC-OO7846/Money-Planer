@@ -7,7 +7,7 @@
   <meta name="color-scheme" content="dark">
   <meta name="description" content="A private, local-first monthly cashflow planner.">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
-  <title>CLEAN // PLANNER V11.1</title>
+  <title>CLEAN // PLANNER V11.2</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
   <link rel="apple-touch-icon" sizes="192x192" href="./assets/icon-192.png">
@@ -52,10 +52,12 @@
     <main class="main-shell" id="mainContent" tabindex="-1">
       <header class="mobile-header">
         <button type="button" class="mobile-brand" data-view="dashboard" aria-label="Go to Dashboard"><span class="brand-mark" aria-hidden="true">//</span><span>CLEAN // PLANNER</span></button>
-        <span class="version-pill">V11.1</span>
+        <span class="version-pill">V11.2</span>
       </header>
 
       <div id="errorBanner" class="error-banner" role="alert" hidden></div>
+      <div id="storageWarning" class="warning-banner" role="alert" hidden><span><strong>Changes are not being saved permanently.</strong> Export a backup before closing this page.</span><button type="button" class="button button--secondary" data-action="export-json">Export Backup Now</button></div>
+      <div id="updateBanner" class="update-banner" role="status" hidden><span><strong>New version available.</strong> Update when you are ready.</span><button type="button" class="button button--primary" data-action="update-app">Update Now</button></div>
 
       <section class="view is-active" id="dashboard" data-title="Dashboard" aria-labelledby="dashboardTitle">
         <header class="page-header page-header--dashboard">
@@ -216,6 +218,7 @@
             <div class="inline-actions"><button type="button" class="button button--secondary" data-action="balance-goals">Balance to 100%</button><button type="button" class="button button--primary" id="applyGoalFundingButton" data-action="apply-goal-funding">Apply Funding</button><button type="button" class="button button--danger" id="undoGoalFundingButton" data-action="undo-goal-funding">Undo Funding</button></div>
           </article>
         </div>
+        <article class="warning-banner funding-change-warning" id="goalFundingWarning" role="status" hidden><span><strong>PLAN CHANGED</strong> The active funding cycle was calculated from older income, expense, planning, or funding-rule values. Balances were not changed automatically.</span><button type="button" class="button button--secondary" data-action="recalculate-goal-funding">Undo &amp; Recalculate</button></article>
         <div class="record-list goals-list" id="goalList"></div>
         <article class="panel funding-history-panel"><div class="panel-head"><h2>Funding Audit</h2><span class="status-chip">CURRENT MONTH</span></div><div class="record-list" id="goalFundingHistory"></div></article>
       </section>
@@ -230,6 +233,7 @@
         </article>
         <div class="calendar-weekdays" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
         <div class="calendar-grid" id="calendarGrid" role="grid" aria-label="Monthly cashflow calendar"></div>
+        <p class="calendar-note" id="calendarCompleteness">This calendar includes dated transactions, income, Goal Funding transfers, and unpaid recurring schedules. Monthly category plans are excluded.</p>
         <p class="calendar-note" id="calendarNote"></p>
       </section>
 
@@ -249,12 +253,14 @@
           <div class="form-grid close-input-grid">
             <label class="field"><span>Actual Base Net Income</span><span class="money-input"><b>THB</b><input id="closeBaseIncomeInput" type="number" min="0" step="100" inputmode="decimal"></span></label>
             <label class="field"><span>Actual OT Income</span><span class="money-input"><b>THB</b><input id="closeOtIncomeInput" type="number" min="0" step="100" inputmode="decimal"></span></label>
+            <label class="field historical-only" id="closeExpenseField" hidden><span>Monthly Expense</span><span class="money-input"><b>THB</b><input id="closeExpenseInput" type="number" min="0" step="100" inputmode="decimal"></span></label>
+            <label class="field historical-only" id="closeGoalFundingField" hidden><span>Goal Funding Applied</span><span class="money-input"><b>THB</b><input id="closeGoalFundingInput" type="number" min="0" step="100" inputmode="decimal"></span></label>
             <label class="field"><span>Actual Saving</span><span class="money-input"><b>THB</b><input id="closeActualSaving" type="number" min="0" step="100" inputmode="decimal"></span></label>
             <label class="field"><span>Actual Investment</span><span class="money-input"><b>THB</b><input id="closeActualInvestment" type="number" min="0" step="100" inputmode="decimal"></span></label>
             <label class="field"><span>Actual Salary Day</span><input id="closeSalaryDayInput" type="number" min="1" max="28" step="1" inputmode="numeric"></label>
             <label class="field"><span>Actual Closing Cash Balance <small>(optional)</small></span><span class="money-input"><b>THB</b><input id="closeBalanceInput" type="number" step="100" inputmode="decimal"></span></label>
           </div>
-          <div class="inline-actions close-actions"><button type="button" class="button button--primary" id="closeMonthButton" data-action="review-close-month">Review &amp; Close Month</button><button type="button" class="button button--danger" id="reopenMonthButton" data-action="open-reopen-review" hidden>Reopen for Correction</button></div>
+          <div class="inline-actions close-actions"><button type="button" class="button button--secondary" id="historicalBackfillButton" data-action="start-historical-backfill" hidden>Create Historical Snapshot</button><button type="button" class="button button--secondary" id="copyCurrentPlanButton" data-action="copy-current-plan" hidden>Copy Current Plan</button><button type="button" class="button button--primary" id="closeMonthButton" data-action="review-close-month">Review &amp; Close Month</button><button type="button" class="button button--danger" id="reopenMonthButton" data-action="open-reopen-review" hidden>Reopen for Correction</button></div>
           <p class="form-note" id="closeNote">Review is required before freezing. Corrections create an auditable new revision.</p>
         </article>
         <article class="panel close-audit-panel"><div class="panel-head"><h2>Snapshot Audit</h2><span id="closeRevision" class="status-chip">NO REVISION</span></div><div class="record-list" id="closeAuditList"></div></article>
@@ -310,12 +316,13 @@
             <div class="button-grid"><button type="button" class="button button--secondary" data-action="export-json">Export JSON</button><button type="button" class="button button--secondary" data-action="import-json">Import JSON</button><button type="button" class="button button--secondary" data-action="export-csv">Export CSV</button><button type="button" class="button button--secondary" data-action="import-csv">Import CSV</button></div>
             <input id="jsonFileInput" class="visually-hidden" type="file" accept="application/json,.json">
             <input id="csvFileInput" class="visually-hidden" type="file" accept="text/csv,.csv">
+            <p class="form-note">Last full backup: <strong id="lastFullBackup">Never</strong></p>
           </article>
           <article class="panel settings-card settings-card--wide">
-            <div class="panel-head"><h2>App</h2><span class="status-chip status-chip--good">V11.1</span></div>
+            <div class="panel-head"><h2>App</h2><span class="status-chip status-chip--good">V11.2</span></div>
             <dl class="detail-list">
-              <div><dt>Version</dt><dd>CLEAN // PLANNER V11.1</dd></div>
-              <div><dt>Schema</dt><dd>11</dd></div>
+              <div><dt>Version</dt><dd>CLEAN // PLANNER V11.2</dd></div>
+              <div><dt>Schema</dt><dd>12</dd></div>
               <div><dt>Local Data</dt><dd id="localDataStatus">Checking…</dd></div>
               <div><dt>Connection</dt><dd id="connectionStatus">Checking…</dd></div>
             </dl>
@@ -421,6 +428,24 @@
       <p class="modal-copy">The frozen revision will remain in the audit trail. Reclosing creates a new revision.</p>
       <label class="field"><span>Reason for correction</span><input id="reopenReason" maxlength="180" required autocomplete="off" placeholder="What needs to be corrected?"></label>
       <div class="modal-actions"><button type="button" class="button button--secondary" data-action="close-dialog">Cancel</button><button type="submit" class="button button--danger">Reopen Snapshot</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="confirmationDialog" aria-labelledby="confirmationDialogTitle" aria-describedby="confirmationDialogCopy">
+    <form id="confirmationForm" novalidate>
+      <header class="modal-head"><div><p class="eyebrow eyebrow--amber">CONFIRM ACTION</p><h2 id="confirmationDialogTitle">Confirm action</h2></div><button type="button" class="icon-button" data-action="close-dialog" aria-label="Close confirmation dialog">×</button></header>
+      <p class="modal-copy" id="confirmationDialogCopy"></p>
+      <div class="modal-actions"><button type="button" class="button button--secondary" data-action="close-dialog">Cancel</button><button type="submit" class="button button--danger" id="confirmationSubmit">Confirm</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="importReviewDialog" aria-labelledby="importReviewTitle" aria-describedby="importReviewCopy">
+    <form id="importReviewForm" novalidate>
+      <header class="modal-head"><div><p class="eyebrow">SAFE IMPORT</p><h2 id="importReviewTitle">Review Import</h2></div><button type="button" class="icon-button" data-action="close-dialog" aria-label="Close import review dialog">×</button></header>
+      <p class="modal-copy" id="importReviewCopy"></p>
+      <dl class="detail-list review-list" id="importReviewSummary"></dl>
+      <label class="check-field"><input id="importReviewConfirmed" type="checkbox"><span id="importReviewConfirmLabel">I reviewed this import and want to continue.</span></label>
+      <div class="modal-actions"><button type="button" class="button button--secondary" data-action="close-dialog">Cancel</button><button type="submit" class="button button--primary" id="importReviewSubmit">Apply Import</button></div>
     </form>
   </dialog>
 

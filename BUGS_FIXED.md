@@ -1,4 +1,20 @@
-# Bugs Fixed in V11.1
+# Bugs Fixed in V11.2
+
+## V11.2 production hardening
+
+- JSON import no longer replaces live state before validation and confirmation. Future schemas are rejected, current data is backed up first, and commit failure rolls back automatically.
+- Re-importing the same CSV no longer creates duplicate transaction history. Stable IDs, recurring-month identity, and a legacy fingerprint make imports idempotent.
+- CSV export no longer drops recurring IDs, timestamps, or category identity, and formula-like cells are protected for spreadsheet use.
+- Active Goal Funding no longer appears current after its calculation inputs change. The original basis is frozen and shown as `PLAN CHANGED` until safely undone or recalculated.
+- Repeated apply/undo/recalculate cycles no longer accumulate floating-point drift; mutation boundaries use cent-stable rounding.
+- Negative daily allowance no longer looks like live spending capacity; it is labelled Plan shortfall and explained as planning data.
+- Calendar now states that undated category plans are excluded and separately reports Opening Balance, posted expenses, and upcoming recurring totals.
+- Past unclosed months no longer require invented current values. Manual historical backfill starts blank and creates a labelled, revisioned audit snapshot only after review.
+- localStorage denial and quota failures no longer imply a successful save. State remains usable in memory and a persistent backup warning is shown.
+- Destructive actions no longer use inaccessible browser confirmation prompts; app dialogs explain consequences, support Escape/focus return, and prevent repeated taps.
+- Transaction filters no longer reset during navigation, and deleting the selected category falls back to All.
+- A waiting service worker no longer activates invisibly; Update Now activates it and reloads once.
+- Large transaction histories no longer create thousands of live record cards at once.
 
 ## V11.1 confirmed issues
 

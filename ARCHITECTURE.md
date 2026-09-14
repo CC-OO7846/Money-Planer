@@ -4,7 +4,8 @@
 
 ```text
 loadState()
-  -> migrateState(schema 11)
+  -> migrateState(schema 12)
+  -> validateState()
   -> canonical state
   -> calculateFinance()
   -> renderApp()
@@ -16,7 +17,7 @@ loadState()
 Mutations follow one path:
 
 ```text
-validated user action -> update canonical state -> persist() -> render active view
+validated user action -> round at mutation boundary -> update canonical state -> validateState() -> persist() -> render active view
 ```
 
 No renderer calls `renderApp()`, no renderer wraps another renderer, and event listeners are attached once.
@@ -48,10 +49,10 @@ No renderer calls `renderApp()`, no renderer wraps another renderer, and event l
 - `goals`: balances, targets, and allocation percentages.
 - `otByMonth`: the single OT source of truth.
 - `calendarOpeningBalances`: per-month opening values.
-- `closedMonths`: revisioned finance snapshots with closed/reopened status, frozen Salary Day, and a value-preserving audit trail.
+- `closedMonths`: revisioned finance snapshots with closed/reopened status, standard/manual type, frozen Salary Day, and a value-preserving audit trail.
 - `allocationRules`: validated goal-funding policy.
-- `allocationHistory`: month-keyed funding cycles with applied/undone status and reversible before/after goal balances.
-- `meta`: schema timestamps and migration archive, including removed V11.0 Monthly Contribution values.
+- `allocationHistory`: month-keyed funding cycles with applied/undone status, reversible before/after goal balances, and a frozen finance/rule basis.
+- `meta`: schema timestamps, last full-backup time, and migration archive, including removed V11.0 Monthly Contribution values.
 
 ## Cash concepts
 
@@ -73,6 +74,18 @@ The Calendar projection includes a Goal Funding transfer but otherwise uses tran
 Applying Goal Funding records a ledger cycle before persistence. Undo uses its before/after entries to restore goal balances and changes the cycle status rather than deleting it.
 
 Monthly Close creates revision 1 only after a confirmation review. Reopen records the complete frozen revision plus a reason. Reclose creates the next revision and keeps earlier frozen values in `auditTrail`.
+
+Manual historical backfill follows the same review boundary, records `historical-backfill` at revision 1, and never copies live settings unless the user chooses Copy Current Plan.
+
+## Import transaction boundary
+
+```text
+parse -> source checks -> migrate/normalize -> validateState -> review counts
+      -> pre-import backup -> clone next state -> validateState -> persist
+      -> success, or restore prior clone on any commit failure
+```
+
+CSV adds stable-ID, recurring-month, and legacy-fingerprint deduplication before the review. The current transaction UI filters are runtime state and survive import/navigation.
 
 ## Rendering and error boundaries
 
