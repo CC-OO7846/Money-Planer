@@ -104,3 +104,10 @@
 - Updated Apple touch icon, Android/Chrome PWA icons, and maskable icon.
 - Added cache-busting query strings to icon metadata.
 - Bumped the service-worker cache so clients fetch the new icon set.
+
+
+## V11.2.4 — App icon only
+- Removed the temporary money icon from the in-app CLEAN // PLANNER header.
+- Restored the original // brand mark.
+- Money artwork remains only as the installed PWA / Home Screen app icon.
+- Bumped manifest identity and service-worker cache.

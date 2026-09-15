@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_NAME = "clean-planner-v11.2.3-force-money-icon-r1";
+const CACHE_NAME = "clean-planner-v11.2.4-app-icon-only-r1";
 const APP_SHELL = [
   "./assets/money-favicon-16-v1123.png",
   "./assets/money-favicon-32-v1123.png",
