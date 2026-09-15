@@ -1,0 +1,14 @@
+CLEAN // PLANNER V11.2.3 icon setup
+
+Manifest:
+- any 192: assets/money-app-icon-192-v1123.png
+- any 512: assets/money-app-icon-512-v1123.png
+- maskable 512: assets/money-app-icon-maskable-512-v1123.png
+
+iOS:
+- assets/money-apple-touch-180-v1123.png
+
+Manifest ID:
+- ./?clean-planner-id=money-v1123
+
+The unique filenames and manifest ID intentionally force a new PWA icon identity.
