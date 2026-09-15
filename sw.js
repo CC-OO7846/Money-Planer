@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_NAME = "clean-planner-v11.2.0-2026-09-13-r1";
+const CACHE_NAME = "clean-planner-v11.2.2-money-icon-20260915-r1";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -8,6 +8,10 @@ const APP_SHELL = [
   "./app.js",
   "./manifest.webmanifest",
   "./assets/favicon.svg",
+  "./assets/icon-512-maskable.png",
+  "./assets/apple-touch-icon-180.png",
+  "./assets/favicon-32.png",
+  "./assets/favicon-16.png",
   "./assets/icon-192.png",
   "./assets/icon-512.png"
 ];

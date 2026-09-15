@@ -88,3 +88,19 @@
 - Added visible focus styles, native accessible dialogs, Escape close support, labeled controls, and minimum touch targets.
 - Added complete PWA assets and a network-first update strategy with offline fallback.
 - Updated title, UI version, cache, documentation, and release metadata to CLEAN // PLANNER V11.0.
+
+
+## V11.2.1 — Icon / PWA metadata fix
+- Added PNG favicon fallbacks at 16x16 and 32x32.
+- Added the correct 180x180 Apple touch icon.
+- Split regular and maskable manifest icons.
+- Added a dedicated 512x512 maskable icon.
+- Bumped service-worker cache so installed clients fetch the new icon metadata.
+
+
+## V11.2.2 — Money App Icon
+- Replaced the app/PWA icon set with the new wallet + money artwork.
+- Removed old SVG favicon precedence so the new PNG favicon is used.
+- Updated Apple touch icon, Android/Chrome PWA icons, and maskable icon.
+- Added cache-busting query strings to icon metadata.
+- Bumped the service-worker cache so clients fetch the new icon set.
