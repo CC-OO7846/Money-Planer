@@ -1,7 +1,19 @@
 "use strict";
 
-const CACHE_NAME = "clean-planner-v11.2.4-app-icon-only-r1";
+const CACHE_NAME = "clean-planner-v11.2.5-mobile-icon-r1";
 const APP_SHELL = [
+  "./favicon-16-v1125.png",
+  "./favicon-32-v1125.png",
+  "./favicon.ico",
+  "./pwa-maskable-512-v1125.png",
+  "./pwa-icon-512-v1125.png",
+  "./pwa-icon-192-v1125.png",
+  "./apple-touch-icon-120x120.png",
+  "./apple-touch-icon-152x152.png",
+  "./apple-touch-icon-167x167.png",
+  "./apple-touch-icon-180x180.png",
+  "./apple-touch-icon.png",
+  "./apple-touch-icon-v1125.png",
   "./assets/money-favicon-16-v1123.png",
   "./assets/money-favicon-32-v1123.png",
   "./assets/money-apple-touch-180-v1123.png",

@@ -111,3 +111,15 @@
 - Restored the original // brand mark.
 - Money artwork remains only as the installed PWA / Home Screen app icon.
 - Bumped manifest identity and service-worker cache.
+
+
+## V11.2.5 — Mobile Home Screen icon compatibility
+- Moved canonical iOS and PWA icons to the repository root.
+- Added conventional `/apple-touch-icon.png` fallback.
+- Added iPhone/iPad touch icon sizes 120, 152, 167 and 180.
+- Removed query strings from Apple touch icon URLs.
+- Reset manifest id/start_url/scope to stable relative root values.
+- Added separate PWA `any` and `maskable` icons with versioned filenames.
+- Added favicon.ico fallback.
+- Added `icon-check.html` to verify that GitHub Pages serves the icon file directly.
+- Bumped service-worker cache.
